@@ -6,7 +6,8 @@ namespace Ecommerce_API.Services.Auth
 {
     public interface IAuthService
     {
-        Task<ResponseVM<User>> Register(UserDto userDto);
-        Task<ResponseVM<string>> Login(UserDto userDto);
+        Task<ResponseVM<RegisteredUserDto>> Register(UserRegisterDto userDto);
+        Task<ResponseVM<AuthDto>> Login(UserLoginDto userDto);
+        Task<ResponseVM<AuthDto>> GetRefreshToken(RefreshTokenDto userDto);
     }
 }
