@@ -84,7 +84,15 @@ namespace Ecommerce_API.Services.Admin
 
         public async Task<ResponseVM<bool>> DeleteUser(int id)
         {
-            throw new NotImplementedException();
+            var user = await _appDbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
+            if (user == null)
+            {
+                return new ResponseVM<bool>("404", "User not found");
+            }
+            _appDbContext.Users.Remove(user);
+            await _appDbContext.SaveChangesAsync();
+
+            return new ResponseVM<bool>("200", "User deleted successfully", true);
         }
 
     }

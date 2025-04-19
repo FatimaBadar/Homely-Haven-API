@@ -13,7 +13,7 @@ namespace Ecommerce_API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService) 
+        public UserController(IUserService userService)
         {
             _userService = userService;
         }
@@ -50,6 +50,32 @@ namespace Ecommerce_API.Controllers
             }
         }
 
+        [HttpPut("updateUser")]
+        public async Task<ActionResult<ResponseVM<UserDto>>> UpdateUser(int id, User newUserDetails)
+        {
+            try
+            {
+                var data = await _userService.UpdateUser(id, newUserDetails);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
+        [HttpDelete("deleteUser")]
+        public async Task<ActionResult<ResponseVM<bool>>> DeleteUser(int id)
+        {
+            try
+            {
+                var data = await _userService.DeleteUser(id);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
