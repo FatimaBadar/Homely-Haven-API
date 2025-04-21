@@ -36,7 +36,7 @@ namespace Ecommerce_API.Services.Categories
             }
 
             var category = await _appDbContext.Categories
-                .FirstOrDefaultAsync(x => x.Id == product.ResponseData.CategoryId);
+                .FirstOrDefaultAsync(x => x.Id == product.ResponseData.Category.Id);
 
             var categoryDto = new CategoryDto
             {

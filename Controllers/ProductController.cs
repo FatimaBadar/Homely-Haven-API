@@ -32,7 +32,7 @@ namespace Ecommerce_API.Controllers
         }
 
         [HttpGet("getProductById/{id}")]
-        public async Task<ActionResult<Product>> GetProductById(int id)
+        public async Task<ActionResult<ProductDto>> GetProductById(int id)
         {
             try
             {
@@ -45,18 +45,18 @@ namespace Ecommerce_API.Controllers
             }
         }
 
-        //[HttpPost("addProduct")]
-        //public async Task<ActionResult<Product>> AddProduct(AddProductDto product)
-        //{
-        //    try
-        //    {
-        //        var data = await _productService.AddProduct(product);
-        //        return Ok(data);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
+        [HttpPost("addProduct")]
+        public async Task<ActionResult<ProductDto>> AddProduct(AddProductDto productDto)
+        {
+            try
+            {
+                var data = await _productService.AddProduct(productDto);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

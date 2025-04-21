@@ -63,6 +63,7 @@ namespace Ecommerce_API.Services.Products
 
             var productDto = products.Select(p => new ProductDto
             {
+                Id = p.Id,
                 Name = p.Name,
                 Description = p.Description,
                 Price = p.Price,
@@ -70,6 +71,7 @@ namespace Ecommerce_API.Services.Products
                 //CategoryId = p.CategoryId,
                 Category = new CategoryDto
                 {
+                    Id = p.Category.Id,
                     Name = p.Category.Name,
                     Description = p.Category.Description
                 },
@@ -80,23 +82,10 @@ namespace Ecommerce_API.Services.Products
                 }).ToList()
             });
 
-            //var productDto = products
-            //    .Select(p => new ProductDto
-            //    {
-            //        //Id = p.Id,
-            //        Name = p.Name,
-            //        Description = p.Description,
-            //        Price = p.Price,
-            //        Stock = p.Stock,
-            //        CategoryName = GetProductCategory(p.Id).Result.ResponseData.Name,
-            //        CategoryDescription = GetProductCategory(p.Id).Result.ResponseData.Description,
-            //        ProductImages = GetProductImagesByProductId(p.Id).Result.ResponseData,
-            //    });
-
             return new ResponseVM<IEnumerable<ProductDto>>("200", "Products found", productDto);
         }
 
-        public async Task<ResponseVM<Product>> GetProductDetailsById(int id)
+        public async Task<ResponseVM<ProductDto>> GetProductDetailsById(int id)
         {
             var product = await _appDbContext.Products
                 .Include(p => p.Category)
@@ -105,41 +94,60 @@ namespace Ecommerce_API.Services.Products
             //FindAsync(productId);
             if (product == null)
             {
-                return new ResponseVM<Product>("404", "No product found by that id");
+                return new ResponseVM<ProductDto>("404", "No product found by that id");
             }
-            return new ResponseVM<Product>("200", "Product fetched succesfully", product);
+
+            var detailedProduct = new ProductDto
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                Stock = product.Stock,
+                Category = new CategoryDto
+                {
+                    Id = product.Category.Id,
+                    Name = product.Name,
+                    Description = product.Description
+                },
+                ProductImages = product.ProductImages
+                .Select(i => new ProductImageDto
+                {
+                    Imageurl = i.ImageUrl,
+                    isMain = i.IsMain,
+                }).ToList()
+            };
+
+            return new ResponseVM<ProductDto>("200", "Product fetched succesfully", detailedProduct);
         }
 
-        public async Task<ResponseVM<Product>> AddProduct(ProductDto product)
+        public async Task<ResponseVM<ProductDto>> AddProduct(AddProductDto productDto)
         {
-            //if (product == null)
-            //{
-            //    return new ResponseVM<Product>("400", "Product cannot be null");
-            //}
+            var newProduct = new Product
+            {
+                Name = productDto.Name,
+                Description = productDto.Description,
+                Price = productDto.Price,
+                Stock = productDto.Stock,
+                CategoryId = productDto.CategoryId,
+                Category = await _appDbContext.Categories.FindAsync(productDto.CategoryId),
+                ProductImages = productDto.Images
+                .Select(i => new ProductImage
+                {
+                    ImageUrl = i.Imageurl,
+                    IsMain = i.isMain,
+                }).ToList()
+            };
+            
+            await _appDbContext.Products.AddAsync(newProduct);
+            await _appDbContext.SaveChangesAsync();
 
-            //_appDbContext.Products.Add(product);
-            //await _appDbContext.SaveChangesAsync();
+            var allProducts = await GetAllProducts();
+            var recent = allProducts.ResponseData
+                .FirstOrDefault(x => x.Id == allProducts.ResponseData.Max(x => x.Id));
 
-            //var newProduct = new ProductDto
-            //{
-            //    Name = product.Name,
-            //    Description = product.Description,
-            //    Price = product.Price,
-            //    Stock = product.Stock,
-            //    Category = new CategoryDto
-            //    {
-            //        Name = product.Category.Name,
-            //        Description = product.Category.Description
-            //    },
-            //    ProductImages = product.ProductImages.Select(i => new ProductImageDto
-            //    {
-            //        Imageurl = i.ImageUrl,
-            //        isMain = i.IsMain,
-            //    }).ToList()
-            //};
-            //return new ResponseVM<Product>("200", "Product added successfully");
-            throw new NotImplementedException();
 
+            return new ResponseVM<ProductDto>("200", "Product created successfully", recent);
         }
 
         public Task<ResponseVM<ProductDto>> UpdateProduct(int id, Product newProductDetails)
