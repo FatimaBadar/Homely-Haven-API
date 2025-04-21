@@ -1,6 +1,6 @@
 ﻿using Ecommerce_API.DTOs;
 using Ecommerce_API.Models;
-using Ecommerce_API.Services.Admin;
+using Ecommerce_API.Services.Users;
 using Ecommerce_API.View;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +20,7 @@ namespace Ecommerce_API.Controllers
 
         //[Authorize(Roles = "Admin")]
         [HttpGet("getAllUsers")]
-        public async Task<ActionResult<ResponseVM<List<User>>>> GetAllUsers()
+        public async Task<ActionResult<ResponseVM<IEnumerable<UserDto>>>> GetAllUsers()
         {
             try
             {
@@ -35,7 +35,7 @@ namespace Ecommerce_API.Controllers
         }
 
         //[Authorize(Roles = "Admin")]
-        [HttpGet("getUserById")]
+        [HttpGet("getUserById/{id}")]
         public async Task<ActionResult<ResponseVM<UserDto>>> GetUserById(int id)
         {
             try
@@ -50,7 +50,8 @@ namespace Ecommerce_API.Controllers
             }
         }
 
-        [HttpPut("updateUser")]
+        //[Authorize(Roles = "Admin")]
+        [HttpPut("updateUser/{id}")]
         public async Task<ActionResult<ResponseVM<UserDto>>> UpdateUser(int id, User newUserDetails)
         {
             try
@@ -64,7 +65,8 @@ namespace Ecommerce_API.Controllers
             }
         }
 
-        [HttpDelete("deleteUser")]
+        //[Authorize(Roles = "Admin")]
+        [HttpDelete("deleteUser/{id}")]
         public async Task<ActionResult<ResponseVM<bool>>> DeleteUser(int id)
         {
             try

@@ -1,4 +1,6 @@
-﻿namespace Ecommerce_API.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Ecommerce_API.Models
 {
     public class User
     {
@@ -11,7 +13,9 @@
         public string? Phone { get; set; }
         public string? Address { get; set; }
         public required bool isAdmin { get; set; } = false;
-        public List<Order>? Orders { get; set; } 
+
+        //[JsonIgnore]
+        public ICollection<Order>? Orders { get; set; } //navigation property
 
     }
 }

@@ -207,7 +207,7 @@ namespace Ecommerce_API.Migrations
             modelBuilder.Entity("Ecommerce_API.Models.Order", b =>
                 {
                     b.HasOne("Ecommerce_API.Models.User", "User")
-                        .WithMany("Orders")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -218,7 +218,7 @@ namespace Ecommerce_API.Migrations
             modelBuilder.Entity("Ecommerce_API.Models.OrderItem", b =>
                 {
                     b.HasOne("Ecommerce_API.Models.Order", "Order")
-                        .WithMany("OrderItems")
+                        .WithMany()
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -248,27 +248,12 @@ namespace Ecommerce_API.Migrations
             modelBuilder.Entity("Ecommerce_API.Models.ProductImage", b =>
                 {
                     b.HasOne("Ecommerce_API.Models.Product", "Product")
-                        .WithMany("ProductImages")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Ecommerce_API.Models.Order", b =>
-                {
-                    b.Navigation("OrderItems");
-                });
-
-            modelBuilder.Entity("Ecommerce_API.Models.Product", b =>
-                {
-                    b.Navigation("ProductImages");
-                });
-
-            modelBuilder.Entity("Ecommerce_API.Models.User", b =>
-                {
-                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

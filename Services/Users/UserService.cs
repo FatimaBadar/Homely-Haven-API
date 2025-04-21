@@ -5,7 +5,7 @@ using Ecommerce_API.Models;
 using Ecommerce_API.View;
 using Microsoft.EntityFrameworkCore;
 
-namespace Ecommerce_API.Services.Admin
+namespace Ecommerce_API.Services.Users
 {
     public class UserService : IUserService
     {
@@ -15,12 +15,12 @@ namespace Ecommerce_API.Services.Admin
         {
             _appDbContext = appDbContext;
         }
-        public async Task<ResponseVM<List<UserDto>>> GetAllUsers()
+        public async Task<ResponseVM<IEnumerable<UserDto>>> GetAllUsers()
         {
             var users = await _appDbContext.Users.ToListAsync();
             if(users == null || users.Count == 0)
             {
-                return new ResponseVM<List<UserDto>>("404", "No users found");
+                return new ResponseVM<IEnumerable<UserDto>>("404", "No users found");
             }
 
             var userListDto = users.Select(user => new UserDto
@@ -33,7 +33,7 @@ namespace Ecommerce_API.Services.Admin
                 isAdmin = user.isAdmin
             }).ToList();
 
-            return new ResponseVM<List<UserDto>>("200", "Fetched all users", userListDto);
+            return new ResponseVM<IEnumerable<UserDto>>("200", "Fetched all users", userListDto);
         }
 
         public async Task<ResponseVM<UserDto>> GetUserById(int id)
@@ -64,7 +64,7 @@ namespace Ecommerce_API.Services.Admin
             }
             existingUser.Name = newUserDetails.Name;
             existingUser.Email = newUserDetails.Email;
-            existingUser.Phone = newUserDetails.Phone;
+            existingUser.Phone = newUserDetails.Phone; 
             existingUser.Address = newUserDetails.Address;
             existingUser.isAdmin = newUserDetails.isAdmin;
 
