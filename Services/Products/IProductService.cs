@@ -10,7 +10,7 @@ namespace Ecommerce_API.Services.Products
         Task <bool> CheckProductById(int id);
         Task<ResponseVM<ProductDto>> GetProductDetailsById(int id);
         Task<ResponseVM<ProductDto>> AddProduct(AddProductDto productDto);
-        Task<ResponseVM<ProductDto>> UpdateProduct(int id, Product newProductDetails);
+        Task<ResponseVM<ProductDto>> UpdateProduct(int id, UpdateProductDto newProductDetails);
         Task<ResponseVM<bool>> DeleteProduct(int id);
         Task<ResponseVM<List<ProductImageDto>>> GetProductImagesByProductId(int productId);
     }

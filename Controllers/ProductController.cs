@@ -58,5 +58,37 @@ namespace Ecommerce_API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPut("updateProduct{id}")]
+        public async Task<ActionResult<ProductDto>> UpdateProduct(int id, UpdateProductDto productDto)
+        {
+            try
+            {
+                var data = await _productService.UpdateProduct(id, productDto);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("deleteProduct/{id}")]
+        public async Task<ActionResult<bool>> DeleteProduct(int id)
+        {
+            try
+            {
+                var data = await _productService.DeleteProduct(id);
+                if(data.ResponseData == false)
+                {
+                    return NotFound(data);
+                }
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

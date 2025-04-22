@@ -139,25 +139,53 @@ namespace Ecommerce_API.Services.Products
                 }).ToList()
             };
             
-            await _appDbContext.Products.AddAsync(newProduct);
+            _appDbContext.Products.Add(newProduct);
             await _appDbContext.SaveChangesAsync();
 
             var allProducts = await GetAllProducts();
             var recent = allProducts.ResponseData
                 .FirstOrDefault(x => x.Id == allProducts.ResponseData.Max(x => x.Id));
 
-
             return new ResponseVM<ProductDto>("200", "Product created successfully", recent);
         }
 
-        public Task<ResponseVM<ProductDto>> UpdateProduct(int id, Product newProductDetails)
+        public async Task<ResponseVM<ProductDto>> UpdateProduct(int id, UpdateProductDto newProductDetails)
         {
-            throw new NotImplementedException();
+            //check if product exixts by this id
+            var product = await _appDbContext.Products.FindAsync(id);
+            if (product == null)
+            {
+                return new ResponseVM<ProductDto>("400", "No product found by that id");
+            }
+
+            product.Id = id;
+            product.Name = newProductDetails.Name;
+            product.Description = newProductDetails.Description;
+            product.Price = newProductDetails.Price;
+            product.Stock = newProductDetails.Stock;
+            product.CategoryId = newProductDetails.CategoryId;
+            product.Category = await _appDbContext.Categories.FindAsync(newProductDetails.CategoryId);
+
+            _appDbContext.Products.Update(product);
+            await _appDbContext.SaveChangesAsync();
+
+            var productDto = GetProductDetailsById(product.Id);
+
+            return new ResponseVM<ProductDto>("200", "Updated product successfully", productDto.Result.ResponseData);
         }
 
-        public Task<ResponseVM<bool>> DeleteProduct(int id)
+        public async Task<ResponseVM<bool>> DeleteProduct(int id)
         {
-            throw new NotImplementedException();
+            //check if product exixts by this id
+            var product = await _appDbContext.Products.FindAsync(id);
+            if (product == null)
+            {
+                return new ResponseVM<bool>("400", "No product found by that id", false);
+            }
+
+            _appDbContext.Products.Remove(product);
+            await _appDbContext.SaveChangesAsync();
+            return new ResponseVM<bool>("200", "Deleted product successfully", true);
         }
     }
 }
